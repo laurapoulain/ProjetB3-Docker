@@ -20,7 +20,13 @@ def get_connection():
 # Route pour indiquer que l'API est disponible
 @app.route("/status")
 def status():
-    return jsonify('OK')
+    try:
+        conn = get_connection()
+        conn.close()
+        return jsonify('OK')
+    except:
+        return "ERREUR", 500
+
 
 # Route qui affiche la liste des objets presents dans la base MySQL
 @app.route("/items")
