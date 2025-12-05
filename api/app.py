@@ -23,10 +23,9 @@ def status():
     try:
         conn = get_connection()
         conn.close()
-        return jsonify('OK')
+        return "OK"
     except:
         return "ERREUR", 500
-
 
 # Route qui affiche la liste des objets presents dans la base MySQL
 @app.route("/items")
