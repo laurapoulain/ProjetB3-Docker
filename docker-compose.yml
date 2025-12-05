@@ -1,0 +1,37 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: itemsdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    # si mysql ne repond pas apres plusieurs essais, le conteneur passe en unhealthy
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -uuser -ppass --silent"]
+      interval: 5s
+      retries: 5
+
+  api:
+    build: ./api
+    env_file: .env
+    # l'api ne démarre que si mysql est disponible (healthy)
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${API_PORT}:8000"
+
+  front:
+    build: ./front
+    ports:
+      - "8080:80"
+    # l'interface ne se lance que si l'api est fonctionnelle
+    depends_on:
+      - api
+
+volumes:
+  db-data:

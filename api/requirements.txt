@@ -1,0 +1,3 @@
+flask
+mysql-connector-python  # pour se connecter à la base
+flask-cors
